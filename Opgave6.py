@@ -15,7 +15,7 @@ def main():
             readCorrectly = True
 
     """
-    Hier wordt een file met ezymen geopend. Als het bestand niet bestaat wordt de exception afgevangen.
+    Hier wordt een file met ezymen geopend. Als het bestand niet bestaat of de inhoud niet correct is wordt de exception afgevangen.
     De inhoud er van wordt met een for loop in een tweedimensionale array opgeslagen waarin enzym naam en sequentie,
     na het verwijderen van het "^" teken, aan elkaar gekoppeld zijn.
     """
@@ -30,11 +30,15 @@ def main():
             for line in lines:
                 elements = line.split()
                 elements[1] = elements[1].replace("^", "")
+                if is_dna(elements[1]) != True:
+                    raise Exception
                 enzymen.append(elements)
         except FileNotFoundError:
             print("The file you specified does not exist, please enter a new one")
         except IndexError:
             print("The contents of the enzyme file are not correct, please enter a new one.")
+        except:
+            print("Not all sequences in the enzyme file are valid dna sequences, please enter a new one.")
         else:
             readCorrectly = True
 
@@ -64,7 +68,10 @@ def main():
                 print("\tEnzymen die niet knippen in de sequentie: ")
                 print("\t" + ", ".join(knipt_niet))
             else:
-                print("\tGeen geldige sequentie.")
+                try:
+                    raise Exception
+                except:
+                    print("\tGeen geldige sequentie.")
             
     
     
@@ -103,10 +110,8 @@ def is_dna(seq):
 
 def knipt(enzym, seq):
     #Als het enzym aanwezig is in de sequentie wordt True gereturned, anders False.
-    if enzym in seq:
-        return True
-    else:
-        return False
+    return enzym in seq
+
        
     
 main()
