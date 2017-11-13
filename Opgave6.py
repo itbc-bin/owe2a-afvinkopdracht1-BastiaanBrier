@@ -2,7 +2,8 @@ def main():
     #bestand = "Alpaca_mRNA.fna" # Voer hier de bestandsnaam van het juiste bestand in, of hernoem je bestand
     """
     Hier onder wordt de lees_inhoud functie aangeroepen om het bestand in te lezen en wordt met een try except
-    structuur een FileNotFoundError afgevangen als het bestand niet bestaat.
+    structuur een FileNotFoundError afgevangen als het bestand niet bestaat. Als de file geen correcte fasta file is wordt
+    er een exception opgeworpen die ook afgevangen wordt.
     """
     readCorrectly = False
     while readCorrectly == False:
@@ -10,7 +11,9 @@ def main():
         try:
             headers, seqs = lees_inhoud(bestandsnaam)
         except FileNotFoundError:
-            print("The file you specified does not exist. Please choose a new one")
+            print("The file you specified does not exist. Please choose a new one.")
+        except:
+            print("The file you specified is not a valid fasta file. Please choose a new one.")
         else:
             readCorrectly = True
 
@@ -68,11 +71,8 @@ def main():
                 print("\tEnzymen die niet knippen in de sequentie: ")
                 print("\t" + ", ".join(knipt_niet))
             else:
-                try:
-                    raise Exception
-                except:
-                    print("\tGeen geldige sequentie.")
-            
+                print("\tGeen geldige sequentie.")
+                
     
     
 def lees_inhoud(bestands_naam):
@@ -83,6 +83,10 @@ def lees_inhoud(bestands_naam):
     sequentie = ""
     #While loop waarin constant de volgende regel wordt gelezen die blijft loopen tot de laatste regel is bereikt.
     line = bestand.readline()
+    #Hier wordt gekeken of de eerste regel van het bestand met '>' begint. Anders wordt er een exception geraised omdat het geen fasta file is.
+    if line.startswith(">") == False:
+        raise Exception
+    
     while line != "":
         #Als de regel een header is wordt hij aan de headers list toegevoegd, anders wordt de regel aan sequentie toegevoegd.
         if line.startswith(">"):
@@ -100,7 +104,7 @@ def lees_inhoud(bestands_naam):
 
     
 def is_dna(seq):
-    #Voor elk karakter wordt gekeken of het iets anders is dan ATCG. Zo ja, dan is dna False. Vervolgens een break zodat er niet onnodig verder geloopt wordt.
+    #Voor elk karakter wordt gekeken of het iets anders is dan ATCG. Zo ja, dan is dna False.
     for char in seq:
         char = char.upper()
         if char not in ['A', 'T', 'C', 'G']:
